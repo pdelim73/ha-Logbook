@@ -1,0 +1,12 @@
+.claude/
+__pycache__/
+*.pyc
+*.db
+*.db.pre_restore
+.secret_key
+.venv/
+venv/
+desktop.ini
+Thumbs.db
+.DS_Store
+.handoff/
