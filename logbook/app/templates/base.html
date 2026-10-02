@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logbook</title>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+  <style>
+    body { background: #f4f6f8; }
+    .navbar { background: #0078d7 !important; }
+    .navbar-brand, .nav-link { color: #fff !important; }
+    .nav-link:hover { color: #cce5ff !important; }
+    .card { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    /* Fix for mobile menu background */
+    .navbar-collapse { padding-bottom: 10px; }
+	.log-desc{
+    white-space: pre-wrap;     /* preserve user newlines */
+    word-break: break-word;    /* prevent overflow on long words */
+    }
+   </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">📓 Logbook</a>
+    
+    <!-- Mobile Hamburger Button -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- Collapsible Menu -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="navbar-nav ms-auto text-end text-lg-start mt-2 mt-lg-0">
+        <a class="nav-link py-2 py-lg-1" href="{{ url_for('index') }}">Entries</a>
+        <a class="nav-link py-2 py-lg-1" href="{{ url_for('new_entry') }}">New Entry</a>
+        <a class="nav-link py-2 py-lg-1" href="{{ url_for('search') }}">Search &amp; Report</a>
+        <a class="nav-link py-2 py-lg-1" href="{{ url_for('settings') }}">Settings</a>
+        <a class="nav-link py-2 py-lg-1" href="{{ url_for('manual') }}">Manual</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid px-3 px-md-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }} alert-dismissible fade show shadow-sm">
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+</html>

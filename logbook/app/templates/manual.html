@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-9">
+
+<h1 class="mb-1">Logbook &mdash; User Manual</h1>
+<p class="text-muted mb-4">A Home Assistant add-on for logging and tracking incidents and events.</p>
+
+<hr>
+
+<!-- Table of Contents -->
+<div class="card mb-4 border-0 shadow-sm">
+  <div class="card-header fw-bold">Table of Contents</div>
+  <div class="card-body">
+    <ol class="mb-0">
+      <li><a href="#1-overview">Overview</a></li>
+      <li><a href="#2-navigation">Navigation</a></li>
+      <li><a href="#3-log-entries">Log Entries</a>
+        <ul>
+          <li><a href="#31-viewing-entries">Viewing entries</a></li>
+          <li><a href="#32-creating-an-entry">Creating an entry</a></li>
+          <li><a href="#33-editing-an-entry">Editing an entry</a></li>
+          <li><a href="#34-deleting-an-entry">Deleting an entry</a></li>
+        </ul>
+      </li>
+      <li><a href="#4-tags">Tags</a>
+        <ul>
+          <li><a href="#41-using-managed-tags">Using managed tags</a></li>
+          <li><a href="#42-submitting-a-new-tag">Submitting a new tag</a></li>
+          <li><a href="#43-pending-tags-on-edited-entries">Pending tags on edited entries</a></li>
+        </ul>
+      </li>
+      <li><a href="#5-search-report">Search &amp; Report</a>
+        <ul>
+          <li><a href="#51-basic-search">Basic search</a></li>
+          <li><a href="#52-advanced-search">Advanced search</a></li>
+          <li><a href="#53-exporting-a-pdf-report">Exporting a PDF report</a></li>
+        </ul>
+      </li>
+      <li><a href="#6-settings">Settings</a>
+        <ul>
+          <li><a href="#61-managing-lookup-tables">Managing lookup tables</a></li>
+          <li><a href="#62-managing-tags">Managing tags</a></li>
+          <li><a href="#63-reviewing-pending-tags">Reviewing pending tags</a></li>
+        </ul>
+      </li>
+      <li><a href="#7-backup-restore">Backup &amp; Restore</a>
+        <ul>
+          <li><a href="#71-manual-backup">Manual backup</a></li>
+          <li><a href="#72-restoring-a-backup">Restoring a backup</a></li>
+          <li><a href="#73-automated-backup">Automated backup</a></li>
+        </ul>
+      </li>
+      <li><a href="#8-automated-backup-setup">Setting Up Automated Backups in Home Assistant</a></li>
+      <li><a href="#9-ha-dashboard">Accessing from an HA Dashboard</a></li>
+    </ol>
+  </div>
+</div>
+
+<hr>
+
+<!-- 1. Overview -->
+<h2 id="1-overview" class="mt-4">1. Overview</h2>
+<p>Logbook is a lightweight web application that runs as a Home Assistant add-on. It provides a structured way to record incidents, faults, or any recurring events &mdash; with support for categorisation, tagging, full-text search, and PDF reporting.</p>
+<p>Data is stored in a SQLite database at <code>/data/logbook/logbook.db</code> inside the add-on container. This location persists across add-on restarts and updates but is <strong>deleted if the add-on is uninstalled</strong> &mdash; always download a backup before uninstalling.</p>
+
+<hr>
+
+<!-- 2. Navigation -->
+<h2 id="2-navigation" class="mt-4">2. Navigation</h2>
+<p>The top navigation bar is available on every page:</p>
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr><th>Link</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Logbook</strong> (logo)</td><td>Go to the entries list</td></tr>
+    <tr><td><strong>Entries</strong></td><td>View all log entries</td></tr>
+    <tr><td><strong>New Entry</strong></td><td>Create a new log entry</td></tr>
+    <tr><td><strong>Search &amp; Report</strong></td><td>Search entries and export PDF</td></tr>
+    <tr><td><strong>Settings</strong></td><td>Manage lookup tables, tags, and backups</td></tr>
+    <tr><td><strong>Manual</strong></td><td>This page</td></tr>
+  </tbody>
+</table>
+<p>On mobile the navigation collapses into a hamburger menu.</p>
+
+<hr>
+
+<!-- 3. Log Entries -->
+<h2 id="3-log-entries" class="mt-4">3. Log Entries</h2>
+
+<h3 id="31-viewing-entries" class="mt-3">3.1 Viewing Entries</h3>
+<p>The <strong>Entries</strong> page lists all log entries sorted by date/time, newest first.</p>
+<ul>
+  <li><strong>Desktop:</strong> displayed as a table with all fields visible.</li>
+  <li><strong>Mobile:</strong> displayed as individual cards, one per entry.</li>
+</ul>
+<p>Tags attached to an entry appear as grey badges below the description.</p>
+
+<h3 id="32-creating-an-entry" class="mt-3">3.2 Creating an Entry</h3>
+<p>Click <strong>New Entry</strong> in the navigation bar. Fill in the form fields:</p>
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Username</strong></td><td>Yes</td><td>Pre-populated with the logged-in HA user's name when accessed via HA ingress. If accessed via a dashboard card (direct port), the field is blank and must be filled manually. If no HA persons are configured, a free-text input is shown instead of a dropdown.</td></tr>
+    <tr><td><strong>Date and Time</strong></td><td>Yes</td><td>Defaults to the current date and time.</td></tr>
+    <tr><td><strong>Location</strong></td><td>No</td><td>Select from the configured locations list.</td></tr>
+    <tr><td><strong>Area</strong></td><td>No</td><td>Select from the configured areas list.</td></tr>
+    <tr><td><strong>Category</strong></td><td>No</td><td>Select from the configured categories list.</td></tr>
+    <tr><td><strong>Severity</strong></td><td>No</td><td>Select from the configured severities list.</td></tr>
+    <tr><td><strong>Description</strong></td><td>Yes</td><td>Free-text description of the event. Newlines are preserved.</td></tr>
+    <tr><td><strong>Tags</strong></td><td>No</td><td>See <a href="#4-tags">Section 4</a>.</td></tr>
+    <tr><td><strong>Recurrent event</strong></td><td>No</td><td>Check if this is a recurring issue.</td></tr>
+  </tbody>
+</table>
+<p>Click <strong>Save Entry</strong> to save, or <strong>Cancel</strong> to go back.</p>
+
+<h3 id="33-editing-an-entry" class="mt-3">3.3 Editing an Entry</h3>
+<p>On the Entries page or Search results, click <strong>Edit ✏</strong> on any row/card. All fields are pre-filled with the current values and can be changed. Click <strong>Save Changes</strong> when done.</p>
+<div class="alert alert-info">
+  Pending (unreviewed) tags assigned to the entry are automatically preserved when saving an edit, even though they do not appear as checkboxes.
+</div>
+
+<h3 id="34-deleting-an-entry" class="mt-3">3.4 Deleting an Entry</h3>
+<p>Click <strong>Delete 🗑</strong> on any row/card. A confirmation dialog will appear before the entry is permanently removed. Deletion also removes all tag associations for that entry.</p>
+
+<hr>
+
+<!-- 4. Tags -->
+<h2 id="4-tags" class="mt-4">4. Tags</h2>
+<p>Tags are short labels that can be attached to entries for filtering and categorisation.</p>
+<p>There are two kinds of tags:</p>
+<ul>
+  <li><strong>Managed tags</strong> &mdash; approved by an admin. Appear as checkboxes in the entry form.</li>
+  <li><strong>Pending tags</strong> &mdash; submitted by a user, awaiting admin review. Shown with a ⏳ indicator.</li>
+</ul>
+
+<h3 id="41-using-managed-tags" class="mt-3">4.1 Using Managed Tags</h3>
+<p>In the Tags section of the entry form, tick one or more checkboxes to attach managed tags to the entry. Untick to remove them.</p>
+
+<h3 id="42-submitting-a-new-tag" class="mt-3">4.2 Submitting a New Tag</h3>
+<p>Type a new tag name in the <strong>New ✏</strong> text field and save the entry. The tag is:</p>
+<ol>
+  <li>Immediately attached to the entry.</li>
+  <li>Added to the <strong>Pending Tags</strong> queue in Settings for admin review.</li>
+</ol>
+<p>New tags are lowercased automatically.</p>
+
+<h3 id="43-pending-tags-on-edited-entries" class="mt-3">4.3 Pending Tags on Edited Entries</h3>
+<p>If an entry has a pending tag and you edit that entry, the pending tag is silently kept even though it has no checkbox. It will remain until an admin approves or rejects it.</p>
+
+<hr>
+
+<!-- 5. Search & Report -->
+<h2 id="5-search-report" class="mt-4">5. Search &amp; Report</h2>
+
+<h3 id="51-basic-search" class="mt-3">5.1 Basic Search</h3>
+<p>Searches the <strong>description</strong> field only. Type a keyword and click <strong>Search</strong>. Results are displayed below in the same desktop/mobile layout as the Entries page.</p>
+
+<h3 id="52-advanced-search" class="mt-3">5.2 Advanced Search</h3>
+<p>Searches across <strong>all text fields</strong> and supports additional filters:</p>
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr><th>Filter</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Keyword</strong></td><td>Matches against description, username, location, area, category, and severity.</td></tr>
+    <tr><td><strong>From date / To date</strong></td><td>Restricts results to a date range (inclusive).</td></tr>
+    <tr><td><strong>Location / Area / Category / Severity</strong></td><td>Exact match dropdowns.</td></tr>
+    <tr><td><strong>Recurrent</strong></td><td>Filter by recurrent flag: All / Yes / No.</td></tr>
+    <tr><td><strong>Tag</strong></td><td>Filter entries that have a specific tag attached.</td></tr>
+  </tbody>
+</table>
+<p>Leave any filter blank to ignore it. Click <strong>Advanced Search</strong> to run.</p>
+
+<h3 id="53-exporting-a-pdf-report" class="mt-3">5.3 Exporting a PDF Report</h3>
+<p>After running a search (basic or advanced), click <strong>Download PDF for these results</strong>. The PDF contains the same filters applied to the current search and includes all matching entries in a formatted table. The file is named <code>logbook_YYYYMMDD_HHMM.pdf</code>.</p>
+
+<hr>
+
+<!-- 6. Settings -->
+<h2 id="6-settings" class="mt-4">6. Settings</h2>
+
+<h3 id="61-managing-lookup-tables" class="mt-3">6.1 Managing Lookup Tables</h3>
+<p>The Settings page provides editable lists for the four dropdown fields used in entries:</p>
+<ul>
+  <li><strong>Locations</strong></li>
+  <li><strong>Areas</strong></li>
+  <li><strong>Categories</strong></li>
+  <li><strong>Severities</strong></li>
+</ul>
+<p>For each list:</p>
+<ul>
+  <li><strong>Add:</strong> Type a name in the input field and click <strong>Add</strong>.</li>
+  <li><strong>Delete:</strong> Click <strong>✕</strong> next to any item and confirm. Note that deleting a lookup value does not change existing entries that already use it &mdash; the value remains in those entries as stored text.</li>
+</ul>
+
+<h3 id="62-managing-tags" class="mt-3">6.2 Managing Tags</h3>
+<p>The <strong>Tags</strong> card works the same way as the lookup tables above. Tags added here become immediately available as checkboxes in the entry form.</p>
+<p>Deleting a managed tag does <strong>not</strong> automatically remove it from entries &mdash; those entries will continue to display the tag as a badge, but it will no longer appear as a checkbox option.</p>
+
+<h3 id="63-reviewing-pending-tags" class="mt-3">6.3 Reviewing Pending Tags</h3>
+<p>The <strong>Pending Tags</strong> section (highlighted in yellow) lists all user-submitted tags awaiting review, with their submission date.</p>
+<p><strong>Approve:</strong> Moves the tag from the pending queue into the managed tags list. It will appear as a checkbox in future entry edits.</p>
+<p><strong>Reject:</strong> Opens a dialog with two options:</p>
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr><th>Option</th><th>Result</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><em>No replacement selected</em></td><td>The tag is removed from all entries it was attached to and deleted.</td></tr>
+    <tr><td><em>Select an existing managed tag</em></td><td>The tag is replaced by the chosen managed tag in all associated entries, then deleted.</td></tr>
+    <tr><td><em>Type a new replacement tag name</em></td><td>A new managed tag is created, the pending tag is replaced by it in all associated entries, then deleted. (New name takes priority over the dropdown if both are filled.)</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 7. Backup & Restore -->
+<h2 id="7-backup-restore" class="mt-4">7. Backup &amp; Restore</h2>
+
+<div class="alert alert-warning">
+  <strong>Warning:</strong> Uninstalling the add-on deletes the database. Always download a backup before uninstalling.
+</div>
+
+<h3 id="71-manual-backup" class="mt-3">7.1 Manual Backup</h3>
+<p>In <strong>Settings &rarr; Backup &amp; Restore</strong>, click <strong>⬇ Download Backup</strong>. A ZIP file containing <code>logbook.db</code> is downloaded to your browser. The file is named <code>logbook_backup_YYYYMMDD_HHMM.zip</code>.</p>
+
+<h3 id="72-restoring-a-backup" class="mt-3">7.2 Restoring a Backup</h3>
+<p>In <strong>Settings &rarr; Backup &amp; Restore</strong>, click <strong>Choose File</strong>, select a previously downloaded <code>.zip</code> backup, then click <strong>Restore</strong>. A confirmation dialog will appear.</p>
+<p>The current database is automatically copied to <code>logbook.db.pre_restore</code> before being overwritten, providing a one-level safety net.</p>
+
+<h3 id="73-automated-backup" class="mt-3">7.3 Automated Backup</h3>
+<p>The app exposes a <code>POST /backup/auto</code> HTTP endpoint that creates a timestamped backup ZIP in the <strong>Home Assistant share folder</strong> at <code>/share/logbook/</code>. This folder is accessible from the HA File editor, Samba or SSH apps.</p>
+<ul>
+  <li>Files are named <code>logbook_backup_YYYYMMDD_HHMM.zip</code>.</li>
+  <li>The 30 most recent backups are kept automatically; older ones are deleted.</li>
+  <li>The endpoint accepts <strong>POST only</strong>. A GET request is answered with HTTP 405.</li>
+</ul>
+<p>This endpoint is designed to be called from a Home Assistant automation on a schedule. See <a href="#8-automated-backup-setup">Section 8</a> for the setup procedure.</p>
+
+<hr>
+
+<!-- 8. Automated Backup Setup -->
+<h2 id="8-automated-backup-setup" class="mt-4">8. Setting Up Automated Backups in Home Assistant</h2>
+<p>Automated backups are triggered by calling the app's <code>/backup/auto</code> endpoint from a HA automation. The steps below use the built-in <code>rest_command</code> integration.</p>
+
+<h3 class="mt-3">Step 1 &mdash; Find the app hostname</h3>
+<p>Open <strong>Settings &rarr; Apps &rarr; Logbook</strong>. The <strong>Info</strong> tab shows the app's <strong>Hostname</strong>, of the form <code>&lt;hash&gt;-logbook</code>. Home Assistant reaches the app at <code>http://&lt;hostname&gt;:8099</code> on its internal network; no port has to be published.</p>
+
+<h3 class="mt-3">Step 2 &mdash; Add a REST command</h3>
+<p>Add the following to your <code>configuration.yaml</code>:</p>
+<pre class="bg-dark text-light rounded p-3"><code>rest_command:
+  logbook_backup:
+    url: "http://&lt;app hostname&gt;:8099/backup/auto"
+    method: POST</code></pre>
+<p>If you have enabled the optional direct port (see <a href="#9-ha-dashboard">Section 9</a>), <code>http://localhost:8099/backup/auto</code> works as well.</p>
+<p>Restart Home Assistant (or reload REST commands) after saving.</p>
+
+<h3 class="mt-3">Step 3 &mdash; Create an automation</h3>
+<p>In <strong>Settings &rarr; Automations &amp; Scenes &rarr; Automations</strong>, create a new automation, or add the following YAML directly:</p>
+<pre class="bg-dark text-light rounded p-3"><code>alias: Logbook - Daily Backup
+description: Creates a daily backup of the Logbook database to /share/logbook/
+triggers:
+  - trigger: time
+    at: "03:00:00"
+conditions: []
+actions:
+  - action: rest_command.logbook_backup
+mode: single</code></pre>
+<p>Adjust the time (<code>03:00:00</code>) to your preference. Save the automation.</p>
+
+<h3 class="mt-3">Step 4 &mdash; Verify</h3>
+<p>Trigger the automation manually once (<strong>Run</strong> in the automation editor). Open the automation <strong>Trace</strong> to inspect the response from the endpoint:</p>
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr><th>Response</th><th>Meaning</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Backup saved to /share/logbook/logbook_backup_....zip</code></td><td>Success &mdash; check <code>/share/logbook/</code> in the File editor.</td></tr>
+    <tr><td><code>Share folder not mounted &mdash; rebuild or reinstall the app...</code></td><td>The <code>/share</code> mapping is not active. Restart the app; if it persists, reinstall it.</td></tr>
+    <tr><td><code>Backup failed: [error message]</code></td><td>A write or permission error &mdash; check the error details.</td></tr>
+    <tr><td><code>No database found</code></td><td>The database does not exist yet (no entries have been saved).</td></tr>
+    <tr><td><code>Action rest_command.logbook_backup not found</code></td><td>The REST command is not loaded. Check <code>configuration.yaml</code> and restart or reload.</td></tr>
+    <tr><td>HTTP 405</td><td>The request used GET. Set <code>method: POST</code>.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="mt-3">Notes</h3>
+<ul>
+  <li>The backup file is saved to <code>/share/logbook/</code> on the HA host, visible from any app that can access the share folder (File editor, Samba, SSH).</li>
+  <li>Only the 30 most recent backup files are kept. Older files are deleted automatically each time the endpoint is called.</li>
+  <li>The manual download backup in Settings is separate and independent &mdash; it streams the ZIP directly to your browser and is not saved to the share folder.</li>
+</ul>
+
+<hr>
+
+<!-- 9. Accessing from an HA Dashboard -->
+<h2 id="9-ha-dashboard" class="mt-4">9. Accessing from an HA Dashboard</h2>
+
+<h3 class="mt-3">The sidebar panel (default)</h3>
+<p>The Logbook appears in the Home Assistant sidebar for <strong>all HA users</strong>, administrators and non-administrators alike. It is served through Home Assistant ingress, so it uses HTTPS and your normal HA login, works in the mobile companion apps, and <strong>pre-selects your name</strong> on new entries. This is the recommended way to use it.</p>
+<p>Each user can hide the sidebar entry in their own profile settings.</p>
+
+<h3 class="mt-3">Optional: the direct port</h3>
+<p>If you need an address that bypasses ingress, publish the port: <strong>Settings &rarr; Apps &rarr; Logbook &rarr; Configuration &rarr; Network</strong>, enter a host port (for example <code>8099</code>) and save. You can then open <code>http://&lt;HA address&gt;:8099</code>, or add it as a sidebar entry in <code>configuration.yaml</code>:</p>
+<pre class="bg-dark text-light rounded p-3"><code>panel_iframe:
+  logbook:
+    title: Logbook
+    icon: mdi:notebook-outline
+    url: http://&lt;HA address&gt;:8099
+    require_admin: false</code></pre>
+
+<h3 class="mt-3">Notes</h3>
+<ul>
+  <li>The direct port has <strong>no authentication</strong>. Anyone on the network who can reach it has full access. It is plain HTTP.</li>
+  <li>Through the direct port the <strong>Username field is not pre-populated</strong>; users must select or type their name.</li>
+  <li>In the author's testing, embedding the direct port in a Webpage card did not display in the iOS companion app. Use the sidebar panel on mobile.</li>
+  <li>All other functionality works identically on both paths.</li>
+</ul>
+
+<div class="mb-5"></div>
+
+</div>
+</div>
+{% endblock %}

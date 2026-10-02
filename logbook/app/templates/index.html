@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "macros.html" import entry_row, entry_card %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0 fw-bold">Log Entries</h2>
+  <a href="{{ url_for('new_entry') }}" class="btn btn-primary shadow-sm">+ New</a>
+</div>
+
+<!-- 💻 DESKTOP VIEW -->
+<div class="card shadow-sm border-0 d-none d-md-block">
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th><th>Date/Time</th><th>User</th><th>Location</th>
+          <th>Area</th><th>Category</th><th>Severity</th>
+          <th>Description</th><th>Rec.</th><th></th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in entries %}
+          {{ entry_row(e, tag_map) }}
+        {% else %}
+          <tr>
+            <td colspan="11" class="text-center text-muted py-5">
+              No entries yet. <a href="{{ url_for('new_entry') }}">Add the first one!</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 📱 MOBILE VIEW -->
+<div class="d-md-none mt-2">
+  {% for e in entries %}
+    {{ entry_card(e, tag_map) }}
+  {% else %}
+    <div class="text-center text-muted py-5 small">
+      No entries yet. <a href="{{ url_for('new_entry') }}">Add the first one!</a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

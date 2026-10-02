@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% from "macros.html" import tags_widget %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>✏️ Edit Entry <small class="text-muted fs-6">#{{ entry.id }}</small></h2>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">← Back</a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" action="{{ url_for('edit_entry', entry_id=entry.id) }}">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">User *</label>
+          {% if ha_users %}
+            <select name="username" class="form-select" required>
+              {% if entry.username and entry.username not in ha_users %}
+                <option value="{{ entry.username }}" selected>{{ entry.username }}</option>
+              {% endif %}
+              {% for u in ha_users %}
+                <option value="{{ u }}" {% if u == entry.username %}selected{% endif %}>{{ u }}</option>
+              {% endfor %}
+            </select>
+          {% else %}
+            <input type="text" name="username" class="form-control"
+                   value="{{ entry.username }}" required>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Date &amp; Time *</label>
+          <input type="datetime-local" name="entry_datetime" class="form-control"
+                 value="{{ entry.entry_datetime[:16] }}" required>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Location</label>
+          <select name="location" class="form-select">
+            <option value="">— none —</option>
+            {% for loc in locations %}
+              <option value="{{ loc.name }}"
+                {% if loc.name == entry.location %}selected{% endif %}>{{ loc.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Area</label>
+          <select name="area" class="form-select">
+            <option value="">— none —</option>
+            {% for a in areas %}
+              <option value="{{ a.name }}"
+                {% if a.name == entry.area %}selected{% endif %}>{{ a.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Category</label>
+          <select name="category" class="form-select">
+            <option value="">— none —</option>
+            {% for cat in categories %}
+              <option value="{{ cat.name }}"
+                {% if cat.name == entry.category %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Severity</label>
+          <select name="severity" class="form-select">
+            <option value="">— none —</option>
+            {% for sev in severities %}
+              <option value="{{ sev.name }}"
+                {% if sev.name == entry.severity %}selected{% endif %}>{{ sev.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Description</label>
+        <textarea name="description" class="form-control" rows="4">{{ entry.description or '' }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Tags</label>
+        {{ tags_widget(tags, entry_tags) }}
+      </div>
+
+      <div class="mb-4 form-check">
+        <input type="checkbox" name="recurrent" id="recurrent" class="form-check-input"
+               {% if entry.recurrent %}checked{% endif %}>
+        <label class="form-check-label" for="recurrent">Recurrent issue</label>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}
