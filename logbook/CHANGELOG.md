@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Add the MIT license. No functional change.
+
 ## 1.2.0
 
 Packaging for publication as a custom app repository, plus security and dependency updates.

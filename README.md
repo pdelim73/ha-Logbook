@@ -18,6 +18,7 @@ A Home Assistant app (add-on) for recording incidents, faults and recurring even
 | Reports | PDF export of any search result |
 | Stack | Python 3.13, Flask, SQLite, ReportLab, Bootstrap 5 |
 | Configuration | None. There are no app options to set |
+| License | [MIT](LICENSE) |
 
 ## Install
 
@@ -47,3 +48,7 @@ repository.yaml        Repository metadata read by Home Assistant
 logbook/               The app: config.yaml, Dockerfile, run.sh, app/ (Flask code and templates)
 docs/                  Documentation
 ```
+
+## License
+
+Released under the [MIT License](LICENSE).
