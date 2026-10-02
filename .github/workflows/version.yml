@@ -1,0 +1,51 @@
+name: Version
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Check version, changelog and tags
+        run: python3 .github/scripts/versioning.py check
+
+  release:
+    name: release
+    needs: check
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Create tag and release for a new version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="$(python3 .github/scripts/versioning.py version)"
+          if git rev-parse -q --verify "refs/tags/v${version}" >/dev/null; then
+            echo "v${version} is already released. Nothing to do."
+            exit 0
+          fi
+          python3 .github/scripts/versioning.py notes "${version}" > "${RUNNER_TEMP}/notes.md"
+          gh release create "v${version}" \
+            --target "${GITHUB_SHA}" \
+            --title "${version}" \
+            --notes-file "${RUNNER_TEMP}/notes.md" \
+            --latest

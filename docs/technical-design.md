@@ -216,7 +216,7 @@ Database: `/data/logbook/logbook.db`, created idempotently by `init_db()` at sta
 
 No compiler is installed in the image: every pinned dependency has a prebuilt musl wheel for CPython 3.13 on both architectures (section 9).
 
-Releasing a change: edit, bump `version` in `logbook/config.yaml`, update `logbook/CHANGELOG.md` and the docs, commit and push to `main`. Home Assistant detects the new version on its next repository refresh.
+Releasing a change: edit, bump `version` in `logbook/config.yaml`, add the matching section to `logbook/CHANGELOG.md`, update the docs, commit and push to `main`. A GitHub Actions workflow (`.github/workflows/version.yml`) checks the version and changelog, then creates the tag and GitHub release. Home Assistant detects the new version on its next repository refresh. See [versioning.md](versioning.md).
 
 ## 9. Verification performed
 
@@ -234,6 +234,7 @@ Releasing a change: edit, bump `version` in `logbook/config.yaml`, update `logbo
 | Container restart | Data kept and the secret key unchanged (same SHA-256 before and after) |
 | `SUPERVISOR_TOKEN` pass-through: container started with a dummy token on a network with a fake supervisor answering `GET /core/api/states` only for the correct Bearer token | The token reaches the Python process through `with-contenv`; the app sent the correct header (one `auth=OK`, no `auth=BAD`) and the user drop-down listed the fake persons and no other entities. A control container without a token showed the plain text field |
 | `docker buildx build --platform linux/arm64` (QEMU emulation) | Builds with no wheel compilation. `uname -m` is `aarch64`, the app's imports succeed, `with-contenv` present |
+| Version script (`.github/scripts/versioning.py`) against a clone with real tags: valid state, correct bump, bump without changelog, no bump, backwards version, malformed version, pull request reusing a released version, release-note extraction | 11/11 behaved as specified |
 | Repository metadata against the Home Assistant developer documentation | `repository.yaml` with `name`; one app folder with `config.yaml`; `panel_admin`, `ports: null`, `ports_description`, `url` are documented keys |
 | Sweep of every commit's content, author and committer metadata for private IP ranges, e-mail addresses other than the GitHub noreply address, serial and MAC patterns, secret-like strings and local paths | Run before each push. Result is reported with the release |
 

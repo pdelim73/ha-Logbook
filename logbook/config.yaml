@@ -1,6 +1,6 @@
 name: "Logbook"
 description: "Incident and event logbook with tags, search and PDF reports"
-version: "1.2.1"
+version: "1.2.2"
 slug: "logbook"
 url: "https://github.com/pdelim73/ha-Logbook"
 init: false

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2
+
+- Add the versioning policy (`docs/versioning.md`).
+- Add a GitHub Actions workflow that checks the version and changelog on every push and pull request, and creates the tag and release automatically for a new version.
+- No functional change to the app.
+
 ## 1.2.1
 
 - Add the MIT license. No functional change.

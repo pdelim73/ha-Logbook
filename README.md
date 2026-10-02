@@ -35,6 +35,7 @@ Full steps, including migrating from a locally installed copy: [docs/installatio
 | [docs/installation.md](docs/installation.md) | Prerequisites, install, first start, migration, scheduled backups, updating, troubleshooting, uninstall |
 | [docs/user-manual.md](docs/user-manual.md) | Using the Logbook: entries, tags, search, reports, settings, backup and restore |
 | [docs/technical-design.md](docs/technical-design.md) | Architecture, design decisions and rejected alternatives, data model, security model, verification, limitations |
+| [docs/versioning.md](docs/versioning.md) | Version numbering, the release process and the automated checks |
 | [logbook/CHANGELOG.md](logbook/CHANGELOG.md) | Version history |
 
 ## Security note
@@ -47,6 +48,7 @@ The app has no login of its own. Access control is whatever Home Assistant provi
 repository.yaml        Repository metadata read by Home Assistant
 logbook/               The app: config.yaml, Dockerfile, run.sh, app/ (Flask code and templates)
 docs/                  Documentation
+.github/               Version check and release workflow
 ```
 
 ## License
